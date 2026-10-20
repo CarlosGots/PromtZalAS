@@ -21,6 +21,7 @@ public enum TipoToken {
     ID,
     CADENA,
     NUMERO,
+    COMENTARIO,
     ERROR,
     EOF
 }
