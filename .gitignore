@@ -2,3 +2,4 @@
 nbproject/private/
 nb-configuration.xml
 *.class
+/target/
