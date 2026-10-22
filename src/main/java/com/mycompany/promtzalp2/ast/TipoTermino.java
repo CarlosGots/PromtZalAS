@@ -1,13 +1,12 @@
-/*
- * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
- * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
- */
 package com.mycompany.promtzalp2.ast;
 
 /**
- *
- * @author carlo
+ * Tipos de termino que puede contener una expresion.
+ * Corresponde a la regla: termino -> CADENA | ID | NUMERO unidad | cargar
  */
-public class TipoTermino {
-    
+public enum TipoTermino {
+    CADENA,
+    ID,
+    NUMERO,
+    CARGAR
 }
