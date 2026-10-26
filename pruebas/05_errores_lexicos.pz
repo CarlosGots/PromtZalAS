@@ -1,0 +1,11 @@
+@modelo "claude-sonnet-4-6"
+@color "azul"
+AGENTE analista {
+  contexto = "Eres un analista"
+  variable ventas = CARGAR("ventas.csv") $
+  RESUMIR ventas EN 100 palabras -> resumen #
+  PREGUNTAR "cadena sin cerrar -> respuesta
+}
+EJECUTAR analista
+EXPORTAR resumen
+/* comentario sin cerrar

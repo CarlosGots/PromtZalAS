@@ -1,0 +1,10 @@
+@modelo "claude-sonnet-4-6"
+@formato "lista"
+AGENTE moderador {
+  contexto = "Clasificas resenas de productos"
+  variable resenas = CARGAR("reviews.txt")
+  CLASIFICAR resenas EN "positivo, neutral, negativo" -> etiquetas
+  RESUMIR etiquetas EN 80 palabras -> informe
+}
+EJECUTAR moderador
+EXPORTAR informe

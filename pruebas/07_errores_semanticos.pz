@@ -1,0 +1,22 @@
+@modelo "claude-sonnet-4-6"
+AGENTE analista {
+  contexto = "Eres un analista"
+  variable ventas = CARGAR("ventas.csv")
+  RESUMIR datos EN 100 palabras -> resumen
+}
+AGENTE traductor {
+  contexto = "Eres un traductor"
+  TRADUCIR resumen EN "ingles" -> traduccion
+}
+AGENTE analista {
+  contexto = "Duplicado"
+  RESUMIR "texto" -> otro
+}
+AGENTE escritor {
+  contexto = "Eres escritor"
+  GENERAR portada DESDE "un titulo llamativo" -> titulo
+}
+EJECUTAR analista
+EJECUTAR traductor
+EJECUTAR revisor
+EXPORTAR resumen, titulo

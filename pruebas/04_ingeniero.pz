@@ -1,0 +1,10 @@
+@modelo "claude-sonnet-4-6"
+/* Agente que genera y revisa
+   una implementacion de quicksort */
+AGENTE ingeniero {
+  contexto = "Eres un desarrollador de Java experto"
+  GENERAR codigo DESDE "una funcion que ordene una lista con quicksort" -> solucion
+  ANALIZAR solucion SOBRE "complejidad y casos borde" COMO "tabla" -> revision
+}
+EJECUTAR ingeniero
+EXPORTAR solucion, revision

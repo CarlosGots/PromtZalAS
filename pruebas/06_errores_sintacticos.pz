@@ -1,0 +1,14 @@
+@modelo "claude-sonnet-4-6"
+@rol analista
+AGENTE analista {
+  contexto = "Eres un analista"
+  variable ventas = = CARGAR("ventas.csv")
+  PREGUNTAR "tendencias?" SOBRE ventas tendencias
+  RESUMIR tendencias EN 100 palabras -> resumen
+}
+AGENTE traductor {
+  contexto = "Eres un traductor"
+  TRADUCIR "hola" EN "ingles" -> resultado
+EJECUTAR analista
+EJECUTAR
+EXPORTAR resumen
