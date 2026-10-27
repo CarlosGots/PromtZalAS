@@ -1,0 +1,68 @@
+/* ================= Editor de codigo ================= */
+.code-area {
+    -fx-background-color: #1e1e1e;
+    -fx-font-family: "Consolas", "Cascadia Mono", monospace;
+    -fx-font-size: 14px;
+}
+.code-area .text { -fx-fill: #d4d4d4; }
+.code-area .caret { -fx-stroke: #aeafad; }
+.code-area .selection { -fx-fill: #264f78; }
+.code-area .lineno {
+    -fx-background-color: #1e1e1e;
+    -fx-text-fill: #6e7681;
+    -fx-font-family: "Consolas", monospace;
+    -fx-padding: 0 10 0 6;
+}
+.code-area .paragraph-box:has-caret { -fx-background-color: #262a2e; }
+
+/* ===== Colores por tipo de token (mismos que el enunciado) ===== */
+.code-area .tk-directiva  { -fx-fill: #2ec4b6; }                          /* teal        */
+.code-area .tk-reservada  { -fx-fill: #569cd6; -fx-font-weight: bold; }   /* azul        */
+.code-area .tk-comando    { -fx-fill: #d16fd8; -fx-font-weight: bold; }   /* magenta     */
+.code-area .tk-conector   { -fx-fill: #f0a35e; }                          /* naranja     */
+.code-area .tk-cadena     { -fx-fill: #f07178; }                          /* rojo        */
+.code-area .tk-numero     { -fx-fill: #8bd36a; }                          /* verde       */
+.code-area .tk-comentario { -fx-fill: #6a9955; -fx-font-style: italic; }  /* verde suave */
+.code-area .tk-id         { -fx-fill: #d4d4d4; }
+.code-area .tk-simbolo    { -fx-fill: #b0b0b0; }
+.code-area .tk-error      { -fx-fill: #f14c4c; }
+
+/* Subrayado de errores despues de compilar */
+.code-area .marca-error {
+    -rtfx-underline-color: #f14c4c;
+    -rtfx-underline-width: 1.5;
+    -rtfx-underline-wave-radius: 2;
+}
+
+/* ================= Paneles ================= */
+.titulo-panel {
+    -fx-font-size: 11px;
+    -fx-font-weight: bold;
+    -fx-text-fill: #9da5b4;
+    -fx-padding: 6 10 6 10;
+}
+.consola, .promptzal-texto {
+    -fx-font-family: "Consolas", monospace;
+    -fx-font-size: 13px;
+}
+.aviso-promptzal {
+    -fx-text-fill: #f0a35e;
+    -fx-padding: 0 10 6 10;
+}
+
+/* Color del tipo de error en la tabla de problemas */
+.tipo-LEXICO     { -fx-text-fill: #f0a35e; }
+.tipo-SINTACTICO { -fx-text-fill: #f14c4c; }
+.tipo-SEMANTICO  { -fx-text-fill: #d16fd8; }
+
+/* ================= Barra de estado ================= */
+.barra-estado {
+    -fx-background-color: #007acc;
+    -fx-padding: 3 12 3 12;
+    -fx-spacing: 18;
+}
+.barra-estado .label {
+    -fx-text-fill: white;
+    -fx-font-size: 12px;
+}
+.barra-estado.con-errores { -fx-background-color: #b8312f; }
