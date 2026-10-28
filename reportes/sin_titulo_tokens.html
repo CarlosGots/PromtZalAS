@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Reporte de tokens - PromptZal</title>
+<style>body { font-family: 'Segoe UI', Roboto, sans-serif; margin: 0; background: #f4f6fa; color: #1f2430; }
+header { background: linear-gradient(135deg, #1e1e2e, #2b3a55); color: #fff; padding: 28px 40px; }
+header h1 { margin: 0; font-size: 26px; }
+header p { margin: 6px 0 0; opacity: .85; font-size: 14px; }
+main { padding: 28px 40px; }
+footer { padding: 16px 40px 28px; color: #889; font-size: 12px; }
+
+/* ---------- Tarjetas de resumen ---------- */
+.tarjetas { display: flex; gap: 16px; flex-wrap: wrap; margin-bottom: 24px; }
+.tarjeta { background: #fff; border-radius: 10px; padding: 14px 22px; min-width: 130px;
+           box-shadow: 0 1px 4px rgba(0,0,0,.08); border-left: 5px solid #2ec4b6; }
+.tarjeta .valor { font-size: 26px; font-weight: 700; }
+.tarjeta .etiqueta { font-size: 12px; color: #667; text-transform: uppercase; letter-spacing: .5px; }
+.tarjeta.lexico { border-color: #e08a3c; }
+.tarjeta.sintactico { border-color: #d64545; }
+.tarjeta.semantico { border-color: #b04fc0; }
+.tarjeta.agente { border-color: #3f7fc4; }
+.tarjeta.variable { border-color: #2a9d8f; }
+.tarjeta.resultado { border-color: #6a8f3a; }
+
+/* ---------- Tablas ---------- */
+table { width: 100%; border-collapse: collapse; background: #fff; border-radius: 10px;
+        overflow: hidden; box-shadow: 0 1px 4px rgba(0,0,0,.08); }
+th { background: #2b3a55; color: #fff; text-align: left; padding: 10px 12px; font-size: 13px; }
+td { padding: 9px 12px; border-bottom: 1px solid #eceff4; font-size: 14px; vertical-align: top; }
+tr:nth-child(even) td { background: #fafbfd; }
+code { font-family: Consolas, monospace; background: #eef1f6; padding: 2px 6px; border-radius: 4px; }
+
+/* ---------- Etiquetas de tipo (errores y simbolos) ---------- */
+.tipo { padding: 3px 9px; border-radius: 12px; font-size: 12px; font-weight: 600; color: #fff; white-space: nowrap; }
+.LEXICO { background: #e08a3c; } .SINTACTICO { background: #d64545; } .SEMANTICO { background: #b04fc0; }
+.AGENTE { background: #3f7fc4; } .VARIABLE { background: #2a9d8f; } .RESULTADO { background: #6a8f3a; }
+.vacio { background: #e9f7ef; color: #1e7d4a; padding: 18px 22px; border-radius: 10px; font-weight: 600; }
+
+/* ---------- Colores por categoria de token (mismos que el editor) ---------- */
+.tk-directiva { --c: #1a9e93; }   /* teal */
+.tk-reservada { --c: #3f7fc4; }   /* azul */
+.tk-comando   { --c: #b04fc0; }   /* magenta */
+.tk-conector  { --c: #e08a3c; }   /* naranja */
+.tk-cadena    { --c: #d64545; }   /* rojo */
+.tk-numero    { --c: #4f9a2f; }   /* verde */
+.tk-id        { --c: #5c6b80; }   /* gris azulado */
+.tk-simbolo   { --c: #8a94a6; }   /* gris */
+.tipo.tk { background: var(--c); }
+code.tk { color: var(--c); font-weight: 600; }
+.tarjeta.tk { border-color: var(--c); }
+
+/* ---------- Colores por tipo de nodo del AST ---------- */
+.n-programa  { --c: #2b3a55; }
+.n-directiva { --c: #1a9e93; }
+.n-agente    { --c: #3f7fc4; }
+.n-variable  { --c: #2a9d8f; }
+.n-comando   { --c: #b04fc0; }
+.n-conector  { --c: #e08a3c; }
+.n-expresion { --c: #7a8699; }
+.n-referencia { --c: #6a8f3a; }
+.n-termino-cadena { --c: #d64545; }
+.n-termino-numero { --c: #4f9a2f; }
+.n-termino-id     { --c: #5c6b80; }
+.n-termino-cargar { --c: #8e44ad; }
+
+/* ---------- Arbol del AST ---------- */
+.arbol, .arbol ul { list-style: none; margin: 0; padding-left: 26px; }
+.arbol { padding-left: 0; }
+.arbol li { position: relative; padding: 4px 0; }
+.arbol ul li::before { content: ''; position: absolute; left: -16px; top: 0; bottom: 0; border-left: 1px solid #b8c2d3; }
+.arbol ul li::after { content: ''; position: absolute; left: -16px; top: 16px; width: 12px; border-top: 1px solid #b8c2d3; }
+.arbol ul li:last-child::before { height: 16px; }
+.nodo { display: inline-block; background: #fff; border: 1px solid #d6dde8; border-left: 4px solid var(--c, #d6dde8);
+        border-radius: 6px; padding: 3px 10px; font-family: Consolas, monospace; font-size: 13px; }
+.clase { font-family: 'Segoe UI', sans-serif; font-size: 11px; color: #fff; background: var(--c, #2b3a55);
+         border-radius: 4px; padding: 1px 6px; margin-right: 8px; }
+.leyenda { display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 22px; }
+</style>
+</head>
+<body>
+<header><h1>Reporte de tokens</h1><p>Archivo: <strong>sin_titulo.pz</strong> &middot; Generado: 27/10/2026 18:02:13</p></header>
+<main>
+<div class="tarjetas"><div class="tarjeta "><div class="valor">47</div><div class="etiqueta">Total</div></div><div class="tarjeta tk tk-directiva"><div class="valor">3</div><div class="etiqueta">Directivas</div></div><div class="tarjeta tk tk-reservada"><div class="valor">5</div><div class="etiqueta">Reservadas</div></div><div class="tarjeta tk tk-comando"><div class="valor">4</div><div class="etiqueta">Comandos</div></div><div class="tarjeta tk tk-conector"><div class="valor">6</div><div class="etiqueta">Conectores</div></div><div class="tarjeta tk tk-cadena"><div class="valor">7</div><div class="etiqueta">Cadenas</div></div><div class="tarjeta tk tk-numero"><div class="valor">1</div><div class="etiqueta">Números</div></div><div class="tarjeta tk tk-id"><div class="valor">13</div><div class="etiqueta">Identificadores</div></div><div class="tarjeta tk tk-simbolo"><div class="valor">8</div><div class="etiqueta">Símbolos</div></div></div><table><tr><th>#</th><th>Lexema</th><th>Tipo</th><th>Fila</th><th>Columna</th></tr><tr><td>1</td><td><code class="tk tk-directiva">@modelo</code></td><td><span class="tipo tk tk-directiva">DIRECTIVA</span></td><td>1</td><td>1</td></tr><tr><td>2</td><td><code class="tk tk-cadena">&quot;claude-sonnet-4-6&quot;</code></td><td><span class="tipo tk tk-cadena">CADENA</span></td><td>1</td><td>9</td></tr><tr><td>3</td><td><code class="tk tk-directiva">@rol</code></td><td><span class="tipo tk tk-directiva">DIRECTIVA</span></td><td>2</td><td>1</td></tr><tr><td>4</td><td><code class="tk tk-cadena">&quot;analista de datos&quot;</code></td><td><span class="tipo tk tk-cadena">CADENA</span></td><td>2</td><td>6</td></tr><tr><td>5</td><td><code class="tk tk-directiva">@formato</code></td><td><span class="tipo tk tk-directiva">DIRECTIVA</span></td><td>3</td><td>1</td></tr><tr><td>6</td><td><code class="tk tk-cadena">&quot;markdown&quot;</code></td><td><span class="tipo tk tk-cadena">CADENA</span></td><td>3</td><td>10</td></tr><tr><td>7</td><td><code class="tk tk-reservada">AGENTE</code></td><td><span class="tipo tk tk-reservada">AGENTE</span></td><td>5</td><td>1</td></tr><tr><td>8</td><td><code class="tk tk-id">analista</code></td><td><span class="tipo tk tk-id">ID</span></td><td>5</td><td>8</td></tr><tr><td>9</td><td><code class="tk tk-simbolo">{</code></td><td><span class="tipo tk tk-simbolo">LLAVE_A</span></td><td>5</td><td>17</td></tr><tr><td>10</td><td><code class="tk tk-reservada">contexto</code></td><td><span class="tipo tk tk-reservada">CONTEXTO</span></td><td>6</td><td>3</td></tr><tr><td>11</td><td><code class="tk tk-simbolo">=</code></td><td><span class="tipo tk tk-simbolo">IGUAL</span></td><td>6</td><td>12</td></tr><tr><td>12</td><td><code class="tk tk-cadena">&quot;Eres un analista de datos experto&quot;</code></td><td><span class="tipo tk tk-cadena">CADENA</span></td><td>6</td><td>14</td></tr><tr><td>13</td><td><code class="tk tk-reservada">variable</code></td><td><span class="tipo tk tk-reservada">VARIABLE</span></td><td>7</td><td>3</td></tr><tr><td>14</td><td><code class="tk tk-id">ventas</code></td><td><span class="tipo tk tk-id">ID</span></td><td>7</td><td>12</td></tr><tr><td>15</td><td><code class="tk tk-simbolo">=</code></td><td><span class="tipo tk tk-simbolo">IGUAL</span></td><td>7</td><td>19</td></tr><tr><td>16</td><td><code class="tk tk-comando">CARGAR</code></td><td><span class="tipo tk tk-comando">CARGAR</span></td><td>7</td><td>21</td></tr><tr><td>17</td><td><code class="tk tk-simbolo">(</code></td><td><span class="tipo tk tk-simbolo">PAR_A</span></td><td>7</td><td>27</td></tr><tr><td>18</td><td><code class="tk tk-cadena">&quot;ventas.csv&quot;</code></td><td><span class="tipo tk tk-cadena">CADENA</span></td><td>7</td><td>28</td></tr><tr><td>19</td><td><code class="tk tk-simbolo">)</code></td><td><span class="tipo tk tk-simbolo">PAR_C</span></td><td>7</td><td>40</td></tr><tr><td>20</td><td><code class="tk tk-comando">PREGUNTAR</code></td><td><span class="tipo tk tk-comando">COMANDO_IA</span></td><td>8</td><td>3</td></tr><tr><td>21</td><td><code class="tk tk-cadena">&quot;Cuales son las 3 tendencias principales?&quot;</code></td><td><span class="tipo tk tk-cadena">CADENA</span></td><td>8</td><td>13</td></tr><tr><td>22</td><td><code class="tk tk-conector">SOBRE</code></td><td><span class="tipo tk tk-conector">CONECTOR</span></td><td>8</td><td>56</td></tr><tr><td>23</td><td><code class="tk tk-id">ventas</code></td><td><span class="tipo tk tk-id">ID</span></td><td>8</td><td>62</td></tr><tr><td>24</td><td><code class="tk tk-conector">-&gt;</code></td><td><span class="tipo tk tk-conector">FLECHA</span></td><td>8</td><td>69</td></tr><tr><td>25</td><td><code class="tk tk-id">tendencias</code></td><td><span class="tipo tk tk-id">ID</span></td><td>8</td><td>72</td></tr><tr><td>26</td><td><code class="tk tk-comando">GENERAR</code></td><td><span class="tipo tk tk-comando">COMANDO_IA</span></td><td>9</td><td>3</td></tr><tr><td>27</td><td><code class="tk tk-id">codigo</code></td><td><span class="tipo tk tk-id">ID</span></td><td>9</td><td>11</td></tr><tr><td>28</td><td><code class="tk tk-conector">DESDE</code></td><td><span class="tipo tk tk-conector">CONECTOR</span></td><td>9</td><td>18</td></tr><tr><td>29</td><td><code class="tk tk-cadena">&quot;grafica de barras de &quot;</code></td><td><span class="tipo tk tk-cadena">CADENA</span></td><td>9</td><td>24</td></tr><tr><td>30</td><td><code class="tk tk-simbolo">+</code></td><td><span class="tipo tk tk-simbolo">MAS</span></td><td>9</td><td>48</td></tr><tr><td>31</td><td><code class="tk tk-id">tendencias</code></td><td><span class="tipo tk tk-id">ID</span></td><td>9</td><td>50</td></tr><tr><td>32</td><td><code class="tk tk-conector">-&gt;</code></td><td><span class="tipo tk tk-conector">FLECHA</span></td><td>9</td><td>61</td></tr><tr><td>33</td><td><code class="tk tk-id">script</code></td><td><span class="tipo tk tk-id">ID</span></td><td>9</td><td>64</td></tr><tr><td>34</td><td><code class="tk tk-comando">RESUMIR</code></td><td><span class="tipo tk tk-comando">COMANDO_IA</span></td><td>10</td><td>3</td></tr><tr><td>35</td><td><code class="tk tk-id">tendencias</code></td><td><span class="tipo tk tk-id">ID</span></td><td>10</td><td>11</td></tr><tr><td>36</td><td><code class="tk tk-conector">EN</code></td><td><span class="tipo tk tk-conector">CONECTOR</span></td><td>10</td><td>22</td></tr><tr><td>37</td><td><code class="tk tk-numero">100</code></td><td><span class="tipo tk tk-numero">NUMERO</span></td><td>10</td><td>25</td></tr><tr><td>38</td><td><code class="tk tk-id">palabras</code></td><td><span class="tipo tk tk-id">ID</span></td><td>10</td><td>29</td></tr><tr><td>39</td><td><code class="tk tk-conector">-&gt;</code></td><td><span class="tipo tk tk-conector">FLECHA</span></td><td>10</td><td>38</td></tr><tr><td>40</td><td><code class="tk tk-id">resumen</code></td><td><span class="tipo tk tk-id">ID</span></td><td>10</td><td>41</td></tr><tr><td>41</td><td><code class="tk tk-simbolo">}</code></td><td><span class="tipo tk tk-simbolo">LLAVE_C</span></td><td>11</td><td>1</td></tr><tr><td>42</td><td><code class="tk tk-reservada">EJECUTAR</code></td><td><span class="tipo tk tk-reservada">EJECUTAR</span></td><td>12</td><td>1</td></tr><tr><td>43</td><td><code class="tk tk-id">analista</code></td><td><span class="tipo tk tk-id">ID</span></td><td>12</td><td>10</td></tr><tr><td>44</td><td><code class="tk tk-reservada">EXPORTAR</code></td><td><span class="tipo tk tk-reservada">EXPORTAR</span></td><td>13</td><td>1</td></tr><tr><td>45</td><td><code class="tk tk-id">resumen</code></td><td><span class="tipo tk tk-id">ID</span></td><td>13</td><td>10</td></tr><tr><td>46</td><td><code class="tk tk-simbolo">,</code></td><td><span class="tipo tk tk-simbolo">COMA</span></td><td>13</td><td>17</td></tr><tr><td>47</td><td><code class="tk tk-id">script</code></td><td><span class="tipo tk tk-id">ID</span></td><td>13</td><td>19</td></tr></table>
+</main>
+<footer>PromptZal IDE &middot; Laboratorio de Lenguajes Formales y de Programaci&oacute;n &middot; USAC CUNOC 2026</footer>
+</body>
+</html>

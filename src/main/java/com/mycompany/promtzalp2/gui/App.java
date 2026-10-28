@@ -15,7 +15,8 @@ public class App extends Application {
     public void start(Stage stage) {
         Application.setUserAgentStylesheet(new PrimerDark().getUserAgentStylesheet());
 
-        VentanaPrincipal ventana = new VentanaPrincipal(stage);
+        // getHostServices() permite abrir los reportes HTML en el navegador.
+        VentanaPrincipal ventana = new VentanaPrincipal(stage, getHostServices());
         Scene escena = new Scene(ventana, 1280, 800);
         escena.getStylesheets().add(App.class.getResource("/estilos.css").toExternalForm());
 

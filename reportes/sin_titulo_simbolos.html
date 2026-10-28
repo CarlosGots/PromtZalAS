@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Tabla de símbolos - PromptZal</title>
+<style>body { font-family: 'Segoe UI', Roboto, sans-serif; margin: 0; background: #f4f6fa; color: #1f2430; }
+header { background: linear-gradient(135deg, #1e1e2e, #2b3a55); color: #fff; padding: 28px 40px; }
+header h1 { margin: 0; font-size: 26px; }
+header p { margin: 6px 0 0; opacity: .85; font-size: 14px; }
+main { padding: 28px 40px; }
+footer { padding: 16px 40px 28px; color: #889; font-size: 12px; }
+.tarjetas { display: flex; gap: 16px; flex-wrap: wrap; margin-bottom: 24px; }
+.tarjeta { background: #fff; border-radius: 10px; padding: 14px 22px; min-width: 130px;
+           box-shadow: 0 1px 4px rgba(0,0,0,.08); border-left: 5px solid #2ec4b6; }
+.tarjeta .valor { font-size: 26px; font-weight: 700; }
+.tarjeta .etiqueta { font-size: 12px; color: #667; text-transform: uppercase; letter-spacing: .5px; }
+.tarjeta.lexico { border-color: #e08a3c; }
+.tarjeta.sintactico { border-color: #d64545; }
+.tarjeta.semantico { border-color: #b04fc0; }
+.tarjeta.agente { border-color: #3f7fc4; }
+.tarjeta.variable { border-color: #2a9d8f; }
+.tarjeta.resultado { border-color: #6a8f3a; }
+table { width: 100%; border-collapse: collapse; background: #fff; border-radius: 10px;
+        overflow: hidden; box-shadow: 0 1px 4px rgba(0,0,0,.08); }
+th { background: #2b3a55; color: #fff; text-align: left; padding: 10px 12px; font-size: 13px; }
+td { padding: 9px 12px; border-bottom: 1px solid #eceff4; font-size: 14px; vertical-align: top; }
+tr:nth-child(even) td { background: #fafbfd; }
+code { font-family: Consolas, monospace; background: #eef1f6; padding: 2px 6px; border-radius: 4px; }
+.tipo { padding: 3px 9px; border-radius: 12px; font-size: 12px; font-weight: 600; color: #fff; white-space: nowrap; }
+.LEXICO { background: #e08a3c; } .SINTACTICO { background: #d64545; } .SEMANTICO { background: #b04fc0; }
+.AGENTE { background: #3f7fc4; } .VARIABLE { background: #2a9d8f; } .RESULTADO { background: #6a8f3a; }
+.vacio { background: #e9f7ef; color: #1e7d4a; padding: 18px 22px; border-radius: 10px; font-weight: 600; }
+.arbol, .arbol ul { list-style: none; margin: 0; padding-left: 26px; }
+.arbol { padding-left: 0; }
+.arbol li { position: relative; padding: 4px 0; }
+.arbol ul li::before { content: ''; position: absolute; left: -16px; top: 0; bottom: 0; border-left: 1px solid #b8c2d3; }
+.arbol ul li::after { content: ''; position: absolute; left: -16px; top: 16px; width: 12px; border-top: 1px solid #b8c2d3; }
+.arbol ul li:last-child::before { height: 16px; }
+.nodo { display: inline-block; background: #fff; border: 1px solid #d6dde8; border-radius: 6px;
+        padding: 3px 10px; font-family: Consolas, monospace; font-size: 13px; }
+.clase { font-family: 'Segoe UI', sans-serif; font-size: 11px; color: #fff; background: #2b3a55;
+         border-radius: 4px; padding: 1px 6px; margin-right: 8px; }
+</style>
+</head>
+<body>
+<header><h1>Tabla de símbolos</h1><p>Archivo: <strong>sin_titulo.pz</strong> &middot; Generado: 27/10/2026 17:48:36</p></header>
+<main>
+<div class="tarjetas"><div class="tarjeta "><div class="valor">5</div><div class="etiqueta">Símbolos</div></div><div class="tarjeta agente"><div class="valor">1</div><div class="etiqueta">Agentes</div></div><div class="tarjeta variable"><div class="valor">1</div><div class="etiqueta">Variables</div></div><div class="tarjeta resultado"><div class="valor">3</div><div class="etiqueta">Resultados</div></div></div><table><tr><th>#</th><th>Nombre</th><th>Tipo</th><th>Ámbito</th><th>Fila</th><th>Columna</th></tr><tr><td>1</td><td><code>analista</code></td><td><span class="tipo AGENTE">AGENTE</span></td><td>global</td><td>5</td><td>1</td></tr><tr><td>2</td><td><code>ventas</code></td><td><span class="tipo VARIABLE">VARIABLE</span></td><td>analista</td><td>7</td><td>12</td></tr><tr><td>3</td><td><code>tendencias</code></td><td><span class="tipo RESULTADO">RESULTADO</span></td><td>analista</td><td>8</td><td>3</td></tr><tr><td>4</td><td><code>script</code></td><td><span class="tipo RESULTADO">RESULTADO</span></td><td>analista</td><td>9</td><td>3</td></tr><tr><td>5</td><td><code>resumen</code></td><td><span class="tipo RESULTADO">RESULTADO</span></td><td>analista</td><td>10</td><td>3</td></tr></table>
+</main>
+<footer>PromptZal IDE &middot; Laboratorio de Lenguajes Formales y de Programaci&oacute;n &middot; USAC CUNOC 2026</footer>
+</body>
+</html>

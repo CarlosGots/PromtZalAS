@@ -5,13 +5,21 @@ import com.mycompany.promtzalp2.Compilador;
 import com.mycompany.promtzalp2.ResultadoCompilacion;
 import com.mycompany.promtzalp2.errores.ManejadorErrores;
 import com.mycompany.promtzalp2.errores.TipoError;
+import com.mycompany.promtzalp2.reportes.PlantillaHTML;
+import com.mycompany.promtzalp2.reportes.ReporteAST;
+import com.mycompany.promtzalp2.reportes.ReporteErrores;
+import com.mycompany.promtzalp2.reportes.ReporteTablaSimbolos;
+import com.mycompany.promtzalp2.reportes.ReporteTokens;
 import java.io.File;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.time.LocalTime;
 import java.time.format.DateTimeFormatter;
+import java.util.List;
 import java.util.Optional;
+import java.util.function.BiFunction;
+import javafx.application.HostServices;
 import javafx.geometry.Orientation;
 import javafx.scene.Node;
 import javafx.scene.control.Alert;
@@ -21,6 +29,7 @@ import javafx.scene.control.ButtonType;
 import javafx.scene.control.Label;
 import javafx.scene.control.Menu;
 import javafx.scene.control.MenuBar;
+import javafx.scene.control.MenuButton;
 import javafx.scene.control.MenuItem;
 import javafx.scene.control.Separator;
 import javafx.scene.control.SeparatorMenuItem;
@@ -38,7 +47,7 @@ import javafx.stage.Stage;
 
 /**
  * Ventana principal del IDE. Arma la distribucion de paneles, maneja los
- * archivos .pz y conecta el boton Compilar con el Compilador.
+ * archivos .pz, conecta el boton Compilar con el Compilador y genera los reportes.
  *
  *  [ menu + barra de herramientas                         ]
  *  [ arbol AST | editor de codigo      | promptzal        ]
@@ -50,6 +59,8 @@ public class VentanaPrincipal extends BorderPane {
     private static final DateTimeFormatter HORA = DateTimeFormatter.ofPattern("HH:mm:ss");
 
     private final Stage stage;
+    /** Servicio de JavaFX para abrir los reportes en el navegador. */
+    private final HostServices hostServices;
     private final Compilador compilador = new Compilador();
 
     private final EditorCodigo editor = new EditorCodigo();
@@ -67,11 +78,12 @@ public class VentanaPrincipal extends BorderPane {
     private final Tab tabTokens = new Tab("Tokens", panelTokens);
     private final Tab tabSimbolos = new Tab("Símbolos", panelSimbolos);
 
-    /** Resultado de la ultima compilacion (lo usaran los reportes). */
+    /** Resultado de la ultima compilacion (lo usan los reportes). */
     private ResultadoCompilacion ultimoResultado;
 
-    public VentanaPrincipal(Stage stage) {
+    public VentanaPrincipal(Stage stage, HostServices hostServices) {
         this.stage = stage;
+        this.hostServices = hostServices;
 
         setTop(new VBox(crearMenu(), crearBarraHerramientas()));
         setCenter(crearAreaTrabajo());
@@ -99,10 +111,13 @@ public class VentanaPrincipal extends BorderPane {
         Menu compilar = new Menu("Compilar");
         compilar.getItems().add(item("Compilar", "F5", this::compilar));
 
+        Menu reportes = new Menu("Reportes");
+        reportes.getItems().addAll(crearItemsReportes());
+
         Menu ayuda = new Menu("Ayuda");
         ayuda.getItems().add(item("Acerca de", null, this::acercaDe));
 
-        return new MenuBar(archivo, compilar, ayuda);
+        return new MenuBar(archivo, compilar, reportes, ayuda);
     }
 
     private ToolBar crearBarraHerramientas() {
@@ -111,7 +126,26 @@ public class VentanaPrincipal extends BorderPane {
         Button guardar = boton("Guardar", "Guardar (Ctrl+S)", this::guardar);
         Button compilar = boton("▶  Compilar", "Compilar (F5)", this::compilar);
         compilar.getStyleClass().add(Styles.SUCCESS);
-        return new ToolBar(nuevo, abrir, guardar, new Separator(), compilar);
+
+        MenuButton reportes = new MenuButton("Reportes");
+        reportes.getItems().addAll(crearItemsReportes());
+
+        return new ToolBar(nuevo, abrir, guardar, new Separator(), compilar, reportes);
+    }
+
+    /** Opciones de reportes (se crean de nuevo para cada menu donde se usan). */
+    private List<MenuItem> crearItemsReportes() {
+        return List.of(
+                item("Reporte de errores", null,
+                        () -> generarReporte("errores", ReporteErrores::generar)),
+                item("Tabla de símbolos", null,
+                        () -> generarReporte("simbolos", ReporteTablaSimbolos::generar)),
+                item("Árbol de sintaxis (AST)", null,
+                        () -> generarReporte("ast", ReporteAST::generar)),
+                item("Reporte de tokens", null,
+                        () -> generarReporte("tokens", ReporteTokens::generar)),
+                new SeparatorMenuItem(),
+                item("Generar todos", "Shortcut+R", this::generarTodos));
     }
 
     /** Distribucion central: tres columnas arriba y pestanas abajo. */
@@ -158,6 +192,7 @@ public class VentanaPrincipal extends BorderPane {
     /** Ejecuta las 4 fases y actualiza todos los paneles con el resultado. */
     private void compilar() {
         log("Compilando " + nombreArchivo() + "...");
+        ultimoResultado = null;
         try {
             ResultadoCompilacion r = compilador.compilar(editor.getTexto());
             ultimoResultado = r;
@@ -210,6 +245,54 @@ public class VentanaPrincipal extends BorderPane {
         tabSimbolos.setText("Símbolos");
         barraEstado.setEstado("Listo", false);
         barraEstado.setTiempo(-1);
+    }
+
+    // =====================================================================
+    //  Reportes
+    // =====================================================================
+
+    /**
+     * Compila el codigo actual, genera un reporte y lo abre en el navegador.
+     * Se compila antes para que el reporte siempre corresponda a lo que hay en el editor.
+     */
+    private void generarReporte(String sufijo, BiFunction<ResultadoCompilacion, String, String> generador) {
+        compilar();
+        if (ultimoResultado == null) {
+            return;
+        }
+        try {
+            File archivo = PlantillaHTML.guardar(nombreBase() + "_" + sufijo + ".html",
+                    generador.apply(ultimoResultado, nombreArchivo()));
+            log("Reporte generado: " + archivo.getAbsolutePath());
+            abrirReporte(archivo);
+        } catch (IOException ex) {
+            error("No se pudo generar el reporte", ex);
+        }
+    }
+
+    /** Compila una sola vez y genera los cuatro reportes; abre el de errores. */
+    private void generarTodos() {
+        compilar();
+        if (ultimoResultado == null) {
+            return;
+        }
+        try {
+            String base = nombreBase();
+            String fuente = nombreArchivo();
+            File errores = PlantillaHTML.guardar(base + "_errores.html",
+                    ReporteErrores.generar(ultimoResultado, fuente));
+            PlantillaHTML.guardar(base + "_simbolos.html", ReporteTablaSimbolos.generar(ultimoResultado, fuente));
+            PlantillaHTML.guardar(base + "_ast.html", ReporteAST.generar(ultimoResultado, fuente));
+            PlantillaHTML.guardar(base + "_tokens.html", ReporteTokens.generar(ultimoResultado, fuente));
+            log("4 reportes generados en " + new File(PlantillaHTML.CARPETA).getAbsolutePath());
+            abrirReporte(errores);
+        } catch (IOException ex) {
+            error("No se pudieron generar los reportes", ex);
+        }
+    }
+
+    private void abrirReporte(File archivo) {
+        hostServices.showDocument(archivo.toURI().toString());
     }
 
     // =====================================================================
@@ -333,7 +416,7 @@ public class VentanaPrincipal extends BorderPane {
         return editor.getArchivo() == null ? "sin_titulo.pz" : editor.getArchivo().getName();
     }
 
-    /** Nombre del archivo sin la extension .pz (para sugerir el nombre del promptzal). */
+    /** Nombre del archivo sin la extension .pz (para nombrar promptzal y reportes). */
     private String nombreBase() {
         String nombre = nombreArchivo();
         return nombre.toLowerCase().endsWith(".pz") ? nombre.substring(0, nombre.length() - 3) : nombre;
